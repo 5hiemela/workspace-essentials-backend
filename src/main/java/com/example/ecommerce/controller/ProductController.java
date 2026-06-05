@@ -57,4 +57,38 @@ public class ProductController {
         Product savedProduct = productService.saveProduct(product);
         return ResponseEntity.ok(savedProduct);
     }
+
+    // Endpoint: PUT /api/products/{id}
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+        // Validate the category inside the updated details
+        if (productDetails.getCategory() == null || productDetails.getCategory().getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<Category> fullCategory = categoryService.getCategoryById(productDetails.getCategory().getId());
+        if (fullCategory.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        productDetails.setCategory(fullCategory.get());
+
+        try {
+            Product updatedProduct = productService.updateProduct(id, productDetails);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Endpoint: DELETE /api/products/{id}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        try {
+            productService.deleteProduct(id);
+            return ResponseEntity.noContent().build(); // Returns a 204 No Content status on success
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
