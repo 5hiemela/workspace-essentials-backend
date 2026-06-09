@@ -1,5 +1,6 @@
 package com.example.ecommerce.service;
 
+import com.example.ecommerce.exception.ResourceNotFoundException;
 import com.example.ecommerce.model.Category;
 import com.example.ecommerce.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,9 @@ public class CategoryService {
     }
 
     // Find a specific category by ID
-    public Optional<Category> getCategoryById(Long id) {
-        return categoryRepository.findById(id);
+    public Category getCategoryById(Long id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
     }
 
     // Save a new category or update an existing one
@@ -37,13 +39,13 @@ public class CategoryService {
             existingCategory.setName(categoryDetails.getName());
             existingCategory.setDescription(categoryDetails.getDescription());
             return categoryRepository.save(existingCategory);
-        }).orElseThrow(() -> new RuntimeException("Category not found with id " + id));
+        }).orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
     }
 
     // Delete a category
     public void deleteCategory(Long id) {
         if (!categoryRepository.existsById(id)) {
-            throw new RuntimeException("Category not found with id " + id);
+            throw new ResourceNotFoundException("Category not found with id " + id);
         }
         categoryRepository.deleteById(id);
     }

@@ -34,9 +34,8 @@ public class CategoryController {
     // Endpoint: GET /api/categories/{id}
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
-        return categoryService.getCategoryById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+
+        return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
     // Endpoint: POST /api/categories
@@ -48,22 +47,16 @@ public class CategoryController {
     // Endpoint: PUT /api/categories/{id}
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category categoryDetails) {
-        try {
-            Category updatedCategory = categoryService.updateCategory(id, categoryDetails);
-            return ResponseEntity.ok(updatedCategory);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+        Category updatedCategory = categoryService.updateCategory(id, categoryDetails);
+        return ResponseEntity.ok(updatedCategory);
     }
 
     // Endpoint: DELETE /api/categories/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        try {
-            categoryService.deleteCategory(id);
-            return ResponseEntity.noContent().build(); // Returns 204 No Content
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
     }
 }

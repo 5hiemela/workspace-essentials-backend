@@ -40,9 +40,7 @@ public class ProductController {
             throw new ResourceNotFoundException("Category ID must be provided.");
         }
 
-        // Grab the category or throw  custom 404 exception right here
-        Category fullCategory = categoryService.getCategoryById(product.getCategory().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + product.getCategory().getId()));
+        Category fullCategory = categoryService.getCategoryById(product.getCategory().getId());
 
         product.setCategory(fullCategory);
         Product savedProduct = productService.saveProduct(product);
@@ -56,8 +54,7 @@ public class ProductController {
             throw new ResourceNotFoundException("Category ID must be provided.");
         }
 
-        Category fullCategory = categoryService.getCategoryById(productDetails.getCategory().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + productDetails.getCategory().getId()));
+        Category fullCategory = categoryService.getCategoryById(productDetails.getCategory().getId());
 
         productDetails.setCategory(fullCategory);
 
