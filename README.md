@@ -29,17 +29,27 @@ This backend implements a clean **Layered (N-Tier) Architecture** to isolate log
 
 ---
 
-## API Reference (Planned Endpoints)
+## API Endpoints Reference
 
 Once the backend logic is complete, the application will expose these core web URLs for the React frontend to communicate with:
 
 | HTTP Method | URL Endpoint | What It Does | Data Expected (Payload) |
 | :--- | :--- | :--- | :--- |
-| GET | /api/products | Retrieves a list of all products for the store catalog | None |
-| GET | /api/products/{id} | Retrieves details for one specific product | None |
-| POST | /api/products | Adds a brand new product to the database | Product Details (JSON) |
-| POST | /api/orders | Processes a customer checkout and saves the order | Order Details (JSON) |
-
+| **Products** | | | |
+| GET | `/api/products` | Retrieves all store catalog products | None |
+| GET | `/api/products/{id}` | Retrieves details for one specific product | None |
+| POST | `/api/products` | Adds a brand new product to the database | Product Details (JSON) |
+| PUT / DELETE | `/api/products/{id}` | Updates or permanently deletes a product | Product / None |
+| **Categories** | | | |
+| GET | `/api/categories` | Retrieves all available product categories | None |
+| POST / PUT / DEL| `/api/categories` | Manages store categories (Create/Update/Delete) | Category Details / None |
+| **Shopping Cart**| | | |
+| GET | `/api/cart` | Retrieves active items in a user's cart | Query Param: `userId` |
+| POST | `/api/cart/add` | Adds item to cart / manages stock checks | Query Params: `userId`, `productId`, `quantity` |
+| DELETE | `/api/cart/items/{id}`| Removes an individual line item from the cart | None |
+| **Users & Orders**| | | |
+| POST | `/api/users/register`| Registers a brand-new user profile | User Details (JSON) |
+| POST | `/api/orders` | Processes customer checkout and saves order | Order Details (JSON) |
 ---
 
 ## Project Roadmap
@@ -51,5 +61,5 @@ Once the backend logic is complete, the application will expose these core web U
 - [X] Build Repository interfaces for database communication
 - [X] Implement Service classes to handle store logic
 - [X] Build Controller endpoints to expose data via URLs
-- [ ] Enable CORS to safely connect the React frontend
-- [ ] Add input validation and clear error handling
+- [X] Enable CORS to safely connect the React frontend
+- [X] Add input validation and clear error handling
