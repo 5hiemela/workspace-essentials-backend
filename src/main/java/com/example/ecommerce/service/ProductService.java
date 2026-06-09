@@ -5,13 +5,13 @@ import com.example.ecommerce.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import com.example.ecommerce.exception.ResourceNotFoundException;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
 
-    // Dependency Injection: Spring automatically injects the repository here
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -22,8 +22,9 @@ public class ProductService {
     }
 
     // Find a specific product by its unique ID
-    public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
+    public Product getProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + id));
     }
 
     // Save a new product or update an existing one
@@ -40,13 +41,13 @@ public class ProductService {
             existingProduct.setStockQuantity(productDetails.getStockQuantity());
             existingProduct.setCategory(productDetails.getCategory());
             return productRepository.save(existingProduct);
-        }).orElseThrow(() -> new RuntimeException("Product not found with id " + id));
+        }).orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + id)); // <-- Changed here
     }
 
     // Delete a product
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {
-            throw new RuntimeException("Product not found with id " + id);
+            throw new ResourceNotFoundException("Product not found with id " + id); // <-- Changed here
         }
         productRepository.deleteById(id);
     }

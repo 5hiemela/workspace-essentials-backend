@@ -6,6 +6,7 @@ import com.example.ecommerce.service.ProductService;
 import com.example.ecommerce.service.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.ecommerce.exception.ResourceNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,31 +30,21 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        return productService.getProductById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
     // Updated POST method to attach the full category data
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        // 1. Check if a category was passed in the request body
         if (product.getCategory() == null || product.getCategory().getId() == null) {
-            return ResponseEntity.badRequest().build();
+            throw new ResourceNotFoundException("Category ID must be provided.");
         }
 
-        // 2. Look up the full category from the database using its ID
-        Optional<Category> fullCategory = categoryService.getCategoryById(product.getCategory().getId());
+        // Grab the category or throw  custom 404 exception right here
+        Category fullCategory = categoryService.getCategoryById(product.getCategory().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + product.getCategory().getId()));
 
-        // 3. If the category doesn't exist, return a 400 Bad Request
-        if (fullCategory.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        // 4. Attach the complete Category object (with name/description) to the product
-        product.setCategory(fullCategory.get());
-
-        // 5. Save the product and return the result
+        product.setCategory(fullCategory);
         Product savedProduct = productService.saveProduct(product);
         return ResponseEntity.ok(savedProduct);
     }
@@ -61,34 +52,23 @@ public class ProductController {
     // Endpoint: PUT /api/products/{id}
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
-        // Validate the category inside the updated details
         if (productDetails.getCategory() == null || productDetails.getCategory().getId() == null) {
-            return ResponseEntity.badRequest().build();
+            throw new ResourceNotFoundException("Category ID must be provided.");
         }
 
-        Optional<Category> fullCategory = categoryService.getCategoryById(productDetails.getCategory().getId());
-        if (fullCategory.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
+        Category fullCategory = categoryService.getCategoryById(productDetails.getCategory().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + productDetails.getCategory().getId()));
 
-        productDetails.setCategory(fullCategory.get());
+        productDetails.setCategory(fullCategory);
 
-        try {
-            Product updatedProduct = productService.updateProduct(id, productDetails);
-            return ResponseEntity.ok(updatedProduct);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Product updatedProduct = productService.updateProduct(id, productDetails);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     // Endpoint: DELETE /api/products/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        try {
-            productService.deleteProduct(id);
-            return ResponseEntity.noContent().build(); // Returns a 204 No Content status on success
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 }
