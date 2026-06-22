@@ -27,29 +27,58 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (categoryRepository.count() == 0 && productRepository.count() == 0 && userRepository.count() == 0) {
-            System.out.println("Database is empty. Seeding sample data...");
+            System.out.println("Database is empty. Seeding tech workspace sample data...");
 
             // Seed a test user account
             User testUser = new User("John", "Doe", "john@example.com", "password123", "CUSTOMER");
             userRepository.save(testUser);
 
-            // Seed categories
-            Category electronics = new Category("Electronics", "Gadgets, computer parts, and accessories");
-            Category apparel = new Category("Apparel", "Clothing, shoes, and wearable accessories");
+            // Seed Workspace Categories
+            Category peripherals = new Category("Peripherals", "High-performance keyboards, mice, and input devices");
+            Category organization = new Category("Organization", "Premium mats, risers, and organizational tools");
 
-            Category savedElectronics = categoryRepository.save(electronics);
-            Category savedApparel = categoryRepository.save(apparel);
+            Category savedPeripherals = categoryRepository.save(peripherals);
+            Category savedOrganization = categoryRepository.save(organization);
 
-            // Seed products
-            Product keyboard = new Product("Mechanical Keyboard", "Wireless RGB mechanical keyboard", 89.99, 45, savedElectronics);
-            Product mouse = new Product("Gaming Mouse", "Ergonomic wireless gaming mouse", 49.99, 60, savedElectronics);
-            Product hoodie = new Product("Developer Hoodie", "Ultra-soft cotton hoodie", 39.99, 25, savedApparel);
+            // Seed Workspace Products
+            Product keyboard = new Product(
+                    "Mechanical Keyboard (Linear)",
+                    "Hot-swappable switches with dense, sound-dampening foam layers.",
+                    89.99,
+                    45,
+                    savedPeripherals
+            );
+
+            Product mouse = new Product(
+                    "Ergonomic Vertical Mouse",
+                    "Designed to sit at a natural handshake angle to reduce wrist fatigue during coding sessions.",
+                    65.00,
+                    60,
+                    savedPeripherals
+            );
+
+            Product mat = new Product(
+                    "Premium Felt Desk Mat",
+                    "Eco-friendly merino wool felt protects your desk and upgrades your mouse glide.",
+                    34.50,
+                    100,
+                    savedOrganization
+            );
+
+            Product riser = new Product(
+                    "Walnut Monitor Riser",
+                    "Solid hardwood construction with integrated slots for cable management.",
+                    79.99,
+                    25,
+                    savedOrganization
+            );
 
             productRepository.save(keyboard);
             productRepository.save(mouse);
-            productRepository.save(hoodie);
+            productRepository.save(mat);
+            productRepository.save(riser);
 
-            System.out.println("Sample data successfully seeded!");
+            System.out.println("Tech workspace sample data successfully seeded!");
         } else {
             System.out.println("Database already contains data. Skipping seeding phase.");
         }
