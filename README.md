@@ -74,12 +74,12 @@ Once the backend logic is complete, the application will expose these core web U
 
 ### Setup Steps
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/5hiemela/workspace-essentials-backend
    ```
 
-2. Configure the database:
+2. **Configure the database:**
    Open `src/main/resources/application.properties` and update the datasource configuration with your local MySQL credentials:
    ```properties
    spring.datasource.url=jdbc:mysql://localhost:3306/your_database_name
@@ -87,7 +87,7 @@ Once the backend logic is complete, the application will expose these core web U
    spring.datasource.password=your_password
    ```
 
-3. Run the application:
+3. **Run the application:**
    ```bash
    ./mvnw spring-boot:run
    ```
